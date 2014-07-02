@@ -1,22 +1,20 @@
 package io.inspace.jtimeago.languages;
 
-import io.inspace.jtimeago.languages.lang.AbstractLanguage;
-import io.inspace.jtimeago.languages.lang.EN;
-import io.inspace.jtimeago.languages.lang.PL;
+import java.util.Locale;
 
 /**
  * LanguageFactory
  */
 public class LanguageFactory {
 
-  public static AbstractLanguage getLanguage(LanguageType languageType){
+  public static Locale getLanguage(LanguageType languageType){
     switch (languageType){
       case EN:
-        return new EN();
+        return new Locale("en", "US");
       case PL:
-        return new PL();
+        return new Locale("pl", "PL");
       default:
-        return new AbstractLanguage();
+        return new Locale("en", "US");
     }
   }
 }

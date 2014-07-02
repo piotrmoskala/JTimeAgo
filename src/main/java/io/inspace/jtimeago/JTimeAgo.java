@@ -2,10 +2,11 @@ package io.inspace.jtimeago;
 
 import io.inspace.jtimeago.languages.LanguageFactory;
 import io.inspace.jtimeago.languages.LanguageType;
-import io.inspace.jtimeago.languages.lang.AbstractLanguage;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,14 +15,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class JTimeAgo extends Date {
 
-  private AbstractLanguage abstractLanguage;
+  private Locale locale;
+  private ResourceBundle resourceBundle;
 
   public JTimeAgo() {
-    abstractLanguage = LanguageFactory.getLanguage(LanguageType.EN);
+    locale = LanguageFactory.getLanguage(LanguageType.EN);
+    resourceBundle = ResourceBundle.getBundle("Language", locale);
   }
 
   public JTimeAgo(LanguageType languageType) {
-    abstractLanguage = LanguageFactory.getLanguage(languageType);
+    locale = LanguageFactory.getLanguage(languageType);
+    resourceBundle = ResourceBundle.getBundle("Language", locale);
   }
 
   public JTimeAgo(Date date) {
@@ -73,36 +77,36 @@ public class JTimeAgo extends Date {
     long deltaSeconds = TimeUnit.MILLISECONDS.toSeconds(deltaMillis);
     long deltaMinutes = TimeUnit.MILLISECONDS.toMinutes(deltaMillis);
     if (deltaSeconds < 5) {
-      return abstractLanguage.getJustNow();
+      return getMessage("justNow");
     } else if (deltaSeconds < 60) {
-      return String.format("%d %s %s", deltaSeconds, abstractLanguage.getSeconds(), abstractLanguage.getAgo());
+      return String.format("%d %s %s", deltaSeconds, getMessage("seconds"), getMessage("ago"));
     } else if (deltaSeconds < 120) {
-      return abstractLanguage.getMinute() + " " + abstractLanguage.getAgo();
+      return getMessage("minute") + " " + getMessage("ago");
     } else if (deltaMinutes < 60) {
-      return String.format("%d %s %s", deltaMinutes, abstractLanguage.getMinutes(), abstractLanguage.getAgo());
+      return String.format("%d %s %s", deltaMinutes, getMessage("minutes"), getMessage("ago"));
     } else if (deltaMinutes < 120) {
-      return abstractLanguage.getHour() + " " + abstractLanguage.getAgo();
+      return getMessage("hour") + " " + getMessage("ago");
     } else if (deltaMinutes < (24 * 60)) {
-      return String.format("%d %s %s", deltaMinutes / 60, abstractLanguage.getHours(), abstractLanguage.getAgo());
+      return String.format("%d %s %s", deltaMinutes / 60, getMessage("hours"), getMessage("ago"));
     } else if (deltaMinutes < (24 * 60 * 2)) {
-      return abstractLanguage.getYesterday();
+      return getMessage("yesterday");
     } else if (deltaMinutes < (24 * 60 * 7)) {
-      return String.format("%d %s %s", deltaMinutes / (60 * 24), abstractLanguage.getDays(), abstractLanguage.getAgo());
+      return String.format("%d %s %s", deltaMinutes / (60 * 24), getMessage("days"), getMessage("ago"));
     } else if (deltaMinutes < (24 * 60 * 14)) {
-      return abstractLanguage.getLastWeek();
+      return getMessage("lastWeek");
     } else if (deltaMinutes < (24 * 60 * 31)) {
       return String
-              .format("%d %s %s", deltaMinutes / (60 * 24 * 7), abstractLanguage.getWeeks(), abstractLanguage.getAgo());
+              .format("%d %s %s", deltaMinutes / (60 * 24 * 7), getMessage("weeks"), getMessage("ago"));
     } else if (deltaMinutes < (24 * 60 * 61)) {
-      return abstractLanguage.getLastMonth();
+      return getMessage("lastMonth");
     } else if (deltaMinutes < (24 * 60 * 365.25)) {
-      return String.format("%d %s %s", deltaMinutes / (60 * 24 * 30), abstractLanguage.getMonths(),
-              abstractLanguage.getAgo());
+      return String.format("%d %s %s", deltaMinutes / (60 * 24 * 30), getMessage("months"),
+              getMessage("ago"));
     } else if (deltaMinutes < (24 * 60 * 731)) {
-      return abstractLanguage.getLastYear();
+      return getMessage("lastYear");
     }
     return String
-            .format("%d %s %s", deltaMinutes / (60 * 24 * 365), abstractLanguage.getYears(), abstractLanguage.getAgo());
+            .format("%d %s %s", deltaMinutes / (60 * 24 * 365), getMessage("years"), getMessage("ago"));
   }
 
 
@@ -111,7 +115,11 @@ public class JTimeAgo extends Date {
   }
 
   public void setLanguage(LanguageType languageType) {
-    abstractLanguage = LanguageFactory.getLanguage(languageType);
+    locale = LanguageFactory.getLanguage(languageType);
+  }
+
+  private String getMessage(String key){
+    return resourceBundle.getString(key);
   }
 
 }
